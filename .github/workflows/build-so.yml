@@ -75,7 +75,7 @@ jobs:
       - name: Upload libSdk.so and APK
         uses: actions/upload-artifact@v4
         with:
-          name: modern-imgui-android-release
+          name: modern-imgui-android-debug
           path: artifacts/
           if-no-files-found: error
           retention-days: 14

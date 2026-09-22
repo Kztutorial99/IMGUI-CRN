@@ -52,7 +52,7 @@ atau bisa dijalankan manual dari tab **Actions**. Workflow tersebut:
 1. Menyiapkan Java 17, Android SDK, NDK `27.0.12077973`, dan CMake `3.22.1`.
 2. Mengambil Dear ImGui `v1.92.9b` saat konfigurasi CMake.
 3. Menjalankan `assembleRelease`.
-4. Mengunggah artifact `modern-imgui-android-release` yang berisi APK dan
+4. Mengunggah artifact `modern-imgui-android-debug` yang berisi APK dan
    `libSdk.so` untuk setiap ABI yang dibuild.
 
 Artifact `.so` tersedia di folder `artifacts/libSdk/<ABI>/libSdk.so`.
