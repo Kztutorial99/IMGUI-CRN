@@ -1,0 +1,1 @@
+# NativeActivity has no app-side Java/Kotlin code to shrink.
