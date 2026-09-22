@@ -18,6 +18,19 @@ libSdk.so
 Library dimuat oleh `android.app.NativeActivity` melalui metadata
 `android.app.lib_name`.
 
+Library juga memiliki `JNI_OnLoad`, sehingga host Java dapat memuatnya dengan:
+
+```java
+System.loadLibrary("Sdk");
+```
+
+Pemanggilan tersebut hanya memuat library. Untuk menampilkan ImGui di game
+milik host, panggil `Sdk_InitializeOnCurrentContext`,
+`Sdk_RenderOnCurrentContext`, dan `Sdk_ShutdownOnCurrentContext` dari render
+thread host saat context OpenGL ES 3 milik host sedang current. Dalam mode
+plugin, `Sdk` tidak membuat EGL context kedua dan tidak memanggil
+`eglSwapBuffers`; host tetap memiliki lifecycle render.
+
 ## Build
 
 Buka folder ini di Android Studio dengan Android SDK, NDK `27.0.12077973`,

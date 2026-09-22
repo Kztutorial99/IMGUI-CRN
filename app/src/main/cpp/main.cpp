@@ -7,8 +7,10 @@
 
 #include <EGL/egl.h>
 #include <GLES3/gl3.h>
+#include <android/native_window.h>
 #include <android/log.h>
 #include <android_native_app_glue.h>
+#include <jni.h>
 
 #include <algorithm>
 #include <cmath>
@@ -62,6 +64,61 @@ int gOutlineMode = 0;
 
 void LogError(const char* message) {
     __android_log_print(ANDROID_LOG_ERROR, kLogTag, "%s", message);
+}
+
+void SetupTheme();
+void DrawUi();
+
+bool InitImGuiBackend(ANativeWindow* window) {
+    if (gInitialized || window == nullptr) {
+        return gInitialized;
+    }
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.IniFilename = nullptr;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    SetupTheme();
+    ImGui_ImplAndroid_Init(window);
+    if (!ImGui_ImplOpenGL3_Init("#version 300 es")) {
+        ImGui_ImplAndroid_Shutdown();
+        ImGui::DestroyContext();
+        return false;
+    }
+    gInitialized = true;
+    return true;
+}
+
+void PrepareImGuiFrame() {
+    if (!gInitialized) {
+        return;
+    }
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplAndroid_NewFrame();
+    ImGui::NewFrame();
+    DrawUi();
+    ImGui::Render();
+}
+
+void RenderImGuiDrawData() {
+    if (!gInitialized) {
+        return;
+    }
+
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ShutdownImGuiBackend() {
+    if (!gInitialized) {
+        return;
+    }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplAndroid_Shutdown();
+    ImGui::DestroyContext();
+    gInitialized = false;
 }
 
 void SetupTheme() {
@@ -376,24 +433,22 @@ void InitEgl(android_app* app) {
         return;
     }
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.IniFilename = nullptr;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    SetupTheme();
-    ImGui_ImplAndroid_Init(app->window);
-    ImGui_ImplOpenGL3_Init("#version 300 es");
-    gInitialized = true;
+    if (!InitImGuiBackend(app->window)) {
+        eglMakeCurrent(gDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        eglDestroyContext(gDisplay, gContext);
+        eglDestroySurface(gDisplay, gSurface);
+        eglTerminate(gDisplay);
+        gDisplay = EGL_NO_DISPLAY;
+        gSurface = EGL_NO_SURFACE;
+        gContext = EGL_NO_CONTEXT;
+    }
 }
 
 void ShutdownEgl() {
     if (!gInitialized) {
         return;
     }
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplAndroid_Shutdown();
-    ImGui::DestroyContext();
+    ShutdownImGuiBackend();
 
     if (gDisplay != EGL_NO_DISPLAY) {
         eglMakeCurrent(gDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -431,22 +486,39 @@ int32_t HandleInputEvent(android_app*, AInputEvent* event) {
 }
 
 void RenderFrame() {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplAndroid_NewFrame();
-    ImGui::NewFrame();
-    DrawUi();
-    ImGui::Render();
+    PrepareImGuiFrame();
 
     const ImVec4 clearColor(0.035f, 0.055f, 0.075f, 1.0f);
     glViewport(0, 0, static_cast<int>(ImGui::GetIO().DisplaySize.x),
                static_cast<int>(ImGui::GetIO().DisplaySize.y));
     glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
     glClear(GL_COLOR_BUFFER_BIT);
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    RenderImGuiDrawData();
     eglSwapBuffers(gDisplay, gSurface);
 }
 
 }  // namespace
+
+extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM*, void*) {
+    __android_log_print(ANDROID_LOG_INFO, kLogTag,
+                        "Sdk loaded through System.loadLibrary");
+    return JNI_VERSION_1_6;
+}
+
+// Host integration API. Call these from the host's render thread while its
+// OpenGL ES 3 context is current. The host owns the context and swap buffers.
+extern "C" bool Sdk_InitializeOnCurrentContext(ANativeWindow* window) {
+    return InitImGuiBackend(window);
+}
+
+extern "C" void Sdk_RenderOnCurrentContext() {
+    PrepareImGuiFrame();
+    RenderImGuiDrawData();
+}
+
+extern "C" void Sdk_ShutdownOnCurrentContext() {
+    ShutdownImGuiBackend();
+}
 
 void android_main(android_app* app) {
     app->onAppCmd = HandleAppCommand;
