@@ -10,6 +10,7 @@ extern "C" {
 // create an EGL context or call eglSwapBuffers in plugin mode.
 bool Sdk_InitializeOnCurrentContext(ANativeWindow* window);
 void Sdk_RenderOnCurrentContext();
+void Sdk_SetDisplaySize(int width, int height);
 void Sdk_ShutdownOnCurrentContext();
 
 #ifdef __cplusplus
