@@ -31,6 +31,11 @@ thread host saat context OpenGL ES 3 milik host sedang current. Dalam mode
 plugin, `Sdk` tidak membuat EGL context kedua dan tidak memanggil
 `eglSwapBuffers`; host tetap memiliki lifecycle render.
 
+Jika host menerima `AInputEvent`, teruskan event tersebut ke
+`Sdk_HandleInputEvent` dari thread UI/input yang sesuai. API ini hanya
+memasukkan event ke backend ImGui yang sudah aktif; ia tidak membaca offset
+atau menulis memory game.
+
 ## Build
 
 Buka folder ini di Android Studio dengan Android SDK, NDK `27.0.12077973`,

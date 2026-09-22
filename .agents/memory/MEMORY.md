@@ -1,1 +1,2 @@
 - [Android EGL ImGui hook](egl-imgui-hook.md) — cover direct, dynamic, and damage-buffer swap paths; require runtime proof that the first frame rendered.
+- [Legacy ImGui source port](legacy-imgui-port.md) — use the uploaded old source selectively; preserve the current host-context renderer and EGL hook.

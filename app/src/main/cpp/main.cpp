@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "imgui_impl_android.h"
 #include "imgui_impl_opengl3.h"
+#include "sdk_plugin.h"
 
 #include <EGL/egl.h>
 #include <GLES3/gl3.h>
@@ -503,7 +504,7 @@ void HandleAppCommand(android_app* app, int32_t command) {
 }
 
 int32_t HandleInputEvent(android_app*, AInputEvent* event) {
-    return ImGui_ImplAndroid_HandleInputEvent(event);
+    return Sdk_HandleInputEvent(event);
 }
 
 void RenderFrame() {
@@ -544,6 +545,13 @@ extern "C" void Sdk_SetDisplaySize(int width, int height) {
     }
     ImGui::GetIO().DisplaySize = ImVec2(static_cast<float>(width),
                                         static_cast<float>(height));
+}
+
+extern "C" int32_t Sdk_HandleInputEvent(AInputEvent* event) {
+    if (!gInitialized || event == nullptr) {
+        return 0;
+    }
+    return ImGui_ImplAndroid_HandleInputEvent(event);
 }
 
 extern "C" void Sdk_ShutdownOnCurrentContext() {

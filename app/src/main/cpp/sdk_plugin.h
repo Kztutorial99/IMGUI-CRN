@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+#include <android/input.h>
 #include <android/native_window.h>
 
 #ifdef __cplusplus
@@ -11,6 +13,7 @@ extern "C" {
 bool Sdk_InitializeOnCurrentContext(ANativeWindow* window);
 void Sdk_RenderOnCurrentContext();
 void Sdk_SetDisplaySize(int width, int height);
+int32_t Sdk_HandleInputEvent(AInputEvent* event);
 void Sdk_ShutdownOnCurrentContext();
 
 #ifdef __cplusplus
