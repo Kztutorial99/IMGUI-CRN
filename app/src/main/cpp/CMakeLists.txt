@@ -60,7 +60,10 @@ target_include_directories(native_app_glue PUBLIC
     ${CMAKE_ANDROID_NDK}/sources/android/native_app_glue
 )
 
-add_library(Sdk SHARED main.cpp)
+add_library(Sdk SHARED
+    main.cpp
+    egl_hook.cpp
+)
 set_target_properties(Sdk PROPERTIES OUTPUT_NAME "Sdk")
 
 target_include_directories(Sdk PRIVATE
@@ -73,6 +76,7 @@ target_link_libraries(Sdk
     android
     EGL
     GLESv3
+    dl
     log
 )
 

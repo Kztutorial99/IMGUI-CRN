@@ -16,6 +16,8 @@
 #include <cmath>
 #include <cstdint>
 
+extern "C" void Sdk_StartEglHook();
+
 namespace {
 
 constexpr char kLogTag[] = "ModernImGuiSdk";
@@ -26,6 +28,7 @@ EGLDisplay gDisplay = EGL_NO_DISPLAY;
 EGLSurface gSurface = EGL_NO_SURFACE;
 EGLContext gContext = EGL_NO_CONTEXT;
 bool gInitialized = false;
+bool gAndroidBackend = false;
 
 enum class Menu {
     Aim = 0,
@@ -70,7 +73,7 @@ void SetupTheme();
 void DrawUi();
 
 bool InitImGuiBackend(ANativeWindow* window) {
-    if (gInitialized || window == nullptr) {
+    if (gInitialized) {
         return gInitialized;
     }
 
@@ -80,10 +83,16 @@ bool InitImGuiBackend(ANativeWindow* window) {
     io.IniFilename = nullptr;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     SetupTheme();
-    ImGui_ImplAndroid_Init(window);
+    gAndroidBackend = window != nullptr;
+    if (gAndroidBackend) {
+        ImGui_ImplAndroid_Init(window);
+    }
     if (!ImGui_ImplOpenGL3_Init("#version 300 es")) {
-        ImGui_ImplAndroid_Shutdown();
+        if (gAndroidBackend) {
+            ImGui_ImplAndroid_Shutdown();
+        }
         ImGui::DestroyContext();
+        gAndroidBackend = false;
         return false;
     }
     gInitialized = true;
@@ -96,7 +105,9 @@ void PrepareImGuiFrame() {
     }
 
     ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplAndroid_NewFrame();
+    if (gAndroidBackend) {
+        ImGui_ImplAndroid_NewFrame();
+    }
     ImGui::NewFrame();
     DrawUi();
     ImGui::Render();
@@ -116,8 +127,11 @@ void ShutdownImGuiBackend() {
     }
 
     ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplAndroid_Shutdown();
+    if (gAndroidBackend) {
+        ImGui_ImplAndroid_Shutdown();
+    }
     ImGui::DestroyContext();
+    gAndroidBackend = false;
     gInitialized = false;
 }
 
@@ -502,6 +516,7 @@ void RenderFrame() {
 extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM*, void*) {
     __android_log_print(ANDROID_LOG_INFO, kLogTag,
                         "Sdk loaded through System.loadLibrary");
+    Sdk_StartEglHook();
     return JNI_VERSION_1_6;
 }
 
@@ -514,6 +529,14 @@ extern "C" bool Sdk_InitializeOnCurrentContext(ANativeWindow* window) {
 extern "C" void Sdk_RenderOnCurrentContext() {
     PrepareImGuiFrame();
     RenderImGuiDrawData();
+}
+
+extern "C" void Sdk_SetDisplaySize(int width, int height) {
+    if (!gInitialized) {
+        return;
+    }
+    ImGui::GetIO().DisplaySize = ImVec2(static_cast<float>(width),
+                                        static_cast<float>(height));
 }
 
 extern "C" void Sdk_ShutdownOnCurrentContext() {
