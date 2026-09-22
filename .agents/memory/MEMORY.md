@@ -1,0 +1,1 @@
+- [Android EGL ImGui hook](egl-imgui-hook.md) — cover direct, dynamic, and damage-buffer swap paths; require runtime proof that the first frame rendered.
