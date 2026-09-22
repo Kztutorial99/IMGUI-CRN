@@ -204,20 +204,21 @@ void DrawAimMenu() {
     ImGui::SliderFloat("Opacity", &gCrosshairOpacity, 0.1f, 1.0f, "%.2f");
     ImGui::Spacing();
 
-    ImVec2 center = ImGui::GetCursorScreenPos() + ImVec2(116.0f, 54.0f);
+    const ImVec2 cursor = ImGui::GetCursorScreenPos();
+    const ImVec2 center(cursor.x + 116.0f, cursor.y + 54.0f);
     ImDrawList* draw = ImGui::GetWindowDrawList();
     const float arm = 15.0f * gCrosshairSize;
     const ImU32 crosshairColor = ImGui::GetColorU32(
         ImVec4(kAccent.x, kAccent.y, kAccent.z, gCrosshairOpacity));
     if (gCrosshair) {
-        draw->AddLine(center - ImVec2(arm + 8.0f, 0.0f),
-                      center - ImVec2(8.0f, 0.0f), crosshairColor, 3.0f);
-        draw->AddLine(center + ImVec2(8.0f, 0.0f),
-                      center + ImVec2(arm + 8.0f, 0.0f), crosshairColor, 3.0f);
-        draw->AddLine(center - ImVec2(0.0f, arm + 8.0f),
-                      center - ImVec2(0.0f, 8.0f), crosshairColor, 3.0f);
-        draw->AddLine(center + ImVec2(0.0f, 8.0f),
-                      center + ImVec2(0.0f, arm + 8.0f), crosshairColor, 3.0f);
+        draw->AddLine(ImVec2(center.x - arm - 8.0f, center.y),
+                      ImVec2(center.x - 8.0f, center.y), crosshairColor, 3.0f);
+        draw->AddLine(ImVec2(center.x + 8.0f, center.y),
+                      ImVec2(center.x + arm + 8.0f, center.y), crosshairColor, 3.0f);
+        draw->AddLine(ImVec2(center.x, center.y - arm - 8.0f),
+                      ImVec2(center.x, center.y - 8.0f), crosshairColor, 3.0f);
+        draw->AddLine(ImVec2(center.x, center.y + 8.0f),
+                      ImVec2(center.x, center.y + arm + 8.0f), crosshairColor, 3.0f);
         draw->AddCircleFilled(center, 2.5f, crosshairColor);
     }
     ImGui::Dummy(ImVec2(232.0f, 106.0f));
