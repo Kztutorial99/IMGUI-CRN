@@ -87,7 +87,12 @@ bool InitImGuiBackend(ANativeWindow* window) {
     if (gAndroidBackend) {
         ImGui_ImplAndroid_Init(window);
     }
+    const GLubyte* glVersion = glGetString(GL_VERSION);
+    __android_log_print(
+        ANDROID_LOG_INFO, kLogTag, "Initializing ImGui OpenGL backend, GL=%s",
+        glVersion == nullptr ? "<unknown>" : reinterpret_cast<const char*>(glVersion));
     if (!ImGui_ImplOpenGL3_Init("#version 300 es")) {
+        LogError("ImGui OpenGL backend initialization failed");
         if (gAndroidBackend) {
             ImGui_ImplAndroid_Shutdown();
         }
