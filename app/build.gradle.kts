@@ -16,7 +16,8 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags += listOf("-std=c++17", "-frtti", "-fexceptions")
-                arguments += listOf("-DANDROID_STL=c++_shared")
+                // Keep Sdk self-contained when the host app loads only libSdk.so.
+                arguments += listOf("-DANDROID_STL=c++_static")
             }
         }
     }
