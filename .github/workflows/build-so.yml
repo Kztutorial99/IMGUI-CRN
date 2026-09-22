@@ -1,0 +1,71 @@
+name: Build Android libSdk.so
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build release APK and native library
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android toolchain
+        run: |
+          sdkmanager "platform-tools" "platforms;android-35" \
+            "build-tools;35.0.0" \
+            "cmake;3.22.1" \
+            "ndk;27.0.12077973"
+          yes | sdkmanager --licenses >/dev/null || true
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Build release
+        run: gradle :app:assembleRelease --no-daemon --stacktrace
+
+      - name: Collect libSdk.so
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/libSdk
+          mapfile -t libraries < <(find app/build -type f -name "libSdk.so" | sort)
+          if [ "${#libraries[@]}" -eq 0 ]; then
+            echo "libSdk.so was not produced"
+            exit 1
+          fi
+          for library in "${libraries[@]}"; do
+            abi="$(basename "$(dirname "$library")")"
+            mkdir -p "artifacts/libSdk/$abi"
+            cp "$library" "artifacts/libSdk/$abi/libSdk.so"
+          done
+          cp app/build/outputs/apk/release/app-release.apk artifacts/
+          printf 'Collected libraries:\n'
+          find artifacts -type f -print
+
+      - name: Upload libSdk.so and APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: modern-imgui-android-release
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 14

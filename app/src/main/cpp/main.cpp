@@ -23,14 +23,42 @@ const ImVec4 kAccentSoft(0.388f, 0.902f, 0.839f, 0.16f);
 EGLDisplay gDisplay = EGL_NO_DISPLAY;
 EGLSurface gSurface = EGL_NO_SURFACE;
 EGLContext gContext = EGL_NO_CONTEXT;
-android_app* gApp = nullptr;
 bool gInitialized = false;
-int gActiveMenu = 0;
-float gProgress = 0.68f;
-bool gLivePreview = true;
-bool gNotifications = true;
-bool gCompactMode = false;
-bool gAutoRefresh = true;
+
+enum class Menu {
+    Aim = 0,
+    Player = 1,
+    Visuals = 2,
+};
+
+Menu gActiveMenu = Menu::Aim;
+
+// These values are UI-facing debug/configuration state. Connect them to the
+// game's own settings adapter when integrating with the runtime.
+bool gHipAimAssist = true;
+bool gSightAimAssist = true;
+bool gAimAssistVertical = false;
+bool gRecoilFeedback = true;
+bool gCrosshair = true;
+float gAimSensitivity = 0.62f;
+float gScopeSensitivity = 0.48f;
+float gCrosshairSize = 0.56f;
+float gCrosshairOpacity = 0.88f;
+
+bool gLocalPlayerInfo = true;
+bool gTeammateMarkers = true;
+bool gEnemyMarkers = false;
+bool gPlayerNames = true;
+bool gPlayerDistance = true;
+bool gPlayerStatus = true;
+
+bool gEnemyFireHint = true;
+bool gEnemyFootstepHint = true;
+bool gHitMarker = true;
+bool gScreenEffects = true;
+bool gOutlinePreview = false;
+float gEffectIntensity = 0.72f;
+int gOutlineMode = 0;
 
 void LogError(const char* message) {
     __android_log_print(ANDROID_LOG_ERROR, kLogTag, "%s", message);
@@ -107,22 +135,22 @@ void DrawSidebar() {
 
     ImGui::SetCursorPosY(28.0f);
     ImGui::PushStyleColor(ImGuiCol_Text, kAccent);
-    ImGui::TextUnformatted("SDK");
+    ImGui::TextUnformatted("CRN");
     ImGui::PopStyleColor();
     ImGui::SameLine();
-    ImGui::TextDisabled("CONTROL");
-    ImGui::TextDisabled("  ANDROID / NATIVE");
+    ImGui::TextDisabled("LAB");
+    ImGui::TextDisabled("  IN-GAME DEBUG");
     ImGui::Dummy(ImVec2(0.0f, 30.0f));
 
-    const char* labels[] = {"01  Overview", "02  Controls", "03  Settings"};
+    const char* labels[] = {"01  Aim", "02  Player", "03  Visuals"};
     for (int i = 0; i < 3; ++i) {
-        const bool selected = gActiveMenu == i;
+        const bool selected = static_cast<int>(gActiveMenu) == i;
         if (selected) {
             ImGui::PushStyleColor(ImGuiCol_Button, kAccentSoft);
             ImGui::PushStyleColor(ImGuiCol_Text, kAccent);
         }
         if (ImGui::Button(labels[i], ImVec2(-1.0f, 52.0f))) {
-            gActiveMenu = i;
+            gActiveMenu = static_cast<Menu>(i);
         }
         if (selected) {
             ImGui::PopStyleColor(2);
@@ -134,116 +162,165 @@ void DrawSidebar() {
     ImGui::Separator();
     ImGui::Spacing();
     ImGui::TextDisabled("BUILD");
-    ImGui::Text("v1.0.0  •  ARM64");
+    ImGui::Text("v1.0.0  •  LIBSDK");
     ImGui::EndChild();
     ImGui::PopStyleColor();
 }
 
-void DrawOverview() {
-    ImGui::TextDisabled("WEDNESDAY, 23 SEPTEMBER 2026");
-    ImGui::SameLine(ImGui::GetWindowWidth() - 130.0f);
-    DrawPill("●  ONLINE", kAccent);
-    ImGui::Spacing();
-    ImGui::Text("Good evening.");
-    ImGui::TextDisabled("Your native interface is ready for action.");
+void DrawAimMenu() {
+    ImGui::TextDisabled("GAMEPLAY / AIM CONFIGURATION");
+    ImGui::Text("Aim");
+    ImGui::SameLine(ImGui::GetWindowWidth() - 128.0f);
+    DrawPill("●  AIM READY", kAccent);
+    ImGui::TextDisabled("Tune the game's official aim and crosshair settings.");
     ImGui::Spacing();
     ImGui::Separator();
     ImGui::Spacing();
 
-    ImGui::Columns(3, "stats", false);
-    DrawStatCard("68%", "SYSTEM LOAD", kAccent);
-    ImGui::NextColumn();
-    DrawStatCard("1.2 ms", "FRAME TIME", ImVec4(0.62f, 0.72f, 1.0f, 1.0f));
-    ImGui::NextColumn();
-    DrawStatCard("Stable", "CONNECTION", ImVec4(0.70f, 0.90f, 0.62f, 1.0f));
-    ImGui::Columns(1);
-
-    ImGui::Spacing();
-    ImGui::Text("Activity");
-    ImGui::SameLine(ImGui::GetWindowWidth() - 150.0f);
-    ImGui::TextDisabled("LIVE TELEMETRY");
-    ImGui::Spacing();
-
+    ImGui::Columns(2, "aim_columns", false);
     ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.065f, 0.095f, 0.12f, 1.0f));
-    ImGui::BeginChild("Activity", ImVec2(0.0f, 180.0f), false);
-    const float width = ImGui::GetContentRegionAvail().x;
+    ImGui::BeginChild("AimAssistCard", ImVec2(0.0f, 272.0f), false);
+    ImGui::Text("Aim assist");
+    ImGui::TextDisabled("Use the game's native aim configuration.");
+    ImGui::Spacing();
+    ImGui::Checkbox("Hip aim assist", &gHipAimAssist);
+    ImGui::Checkbox("Sight aim assist", &gSightAimAssist);
+    ImGui::Checkbox("Vertical assist", &gAimAssistVertical);
+    ImGui::Checkbox("Recoil feedback", &gRecoilFeedback);
+    ImGui::Spacing();
+    ImGui::SliderFloat("Aim sensitivity", &gAimSensitivity, 0.0f, 1.0f, "%.2f");
+    ImGui::SliderFloat("Scope sensitivity", &gScopeSensitivity, 0.0f, 1.0f, "%.2f");
+    ImGui::EndChild();
+    ImGui::PopStyleColor();
+
+    ImGui::NextColumn();
+    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.065f, 0.095f, 0.12f, 1.0f));
+    ImGui::BeginChild("CrosshairCard", ImVec2(0.0f, 272.0f), false);
+    ImGui::Text("Crosshair");
+    ImGui::TextDisabled("Live preview for the in-game reticle.");
+    ImGui::Spacing();
+    ImGui::Checkbox("Show crosshair", &gCrosshair);
+    ImGui::SliderFloat("Crosshair size", &gCrosshairSize, 0.2f, 1.0f, "%.2f");
+    ImGui::SliderFloat("Opacity", &gCrosshairOpacity, 0.1f, 1.0f, "%.2f");
+    ImGui::Spacing();
+
+    ImVec2 center = ImGui::GetCursorScreenPos() + ImVec2(116.0f, 54.0f);
     ImDrawList* draw = ImGui::GetWindowDrawList();
-    const ImVec2 origin = ImGui::GetCursorScreenPos();
-    const float height = 112.0f;
-    for (int i = 0; i < 31; ++i) {
-        const float wave = std::sin(static_cast<float>(i) * 0.55f) * 0.22f;
-        const float second = std::cos(static_cast<float>(i) * 0.22f) * 0.12f;
-        const float y = origin.y + height * (0.52f + wave + second);
-        const float x = origin.x + width * static_cast<float>(i) / 30.0f;
-        if (i > 0) {
-            const float previous = origin.y + height *
-                (0.52f + std::sin(static_cast<float>(i - 1) * 0.55f) * 0.22f +
-                 std::cos(static_cast<float>(i - 1) * 0.22f) * 0.12f);
-            const float previousX = origin.x + width * static_cast<float>(i - 1) / 30.0f;
-            draw->AddLine(ImVec2(previousX, previous), ImVec2(x, y), kAccent, 3.0f);
-        }
+    const float arm = 15.0f * gCrosshairSize;
+    const ImU32 crosshairColor = ImGui::GetColorU32(
+        ImVec4(kAccent.x, kAccent.y, kAccent.z, gCrosshairOpacity));
+    if (gCrosshair) {
+        draw->AddLine(center - ImVec2(arm + 8.0f, 0.0f),
+                      center - ImVec2(8.0f, 0.0f), crosshairColor, 3.0f);
+        draw->AddLine(center + ImVec2(8.0f, 0.0f),
+                      center + ImVec2(arm + 8.0f, 0.0f), crosshairColor, 3.0f);
+        draw->AddLine(center - ImVec2(0.0f, arm + 8.0f),
+                      center - ImVec2(0.0f, 8.0f), crosshairColor, 3.0f);
+        draw->AddLine(center + ImVec2(0.0f, 8.0f),
+                      center + ImVec2(0.0f, arm + 8.0f), crosshairColor, 3.0f);
+        draw->AddCircleFilled(center, 2.5f, crosshairColor);
     }
-    ImGui::Dummy(ImVec2(width, height + 18.0f));
-    ImGui::TextDisabled("Last 30 frames");
-    ImGui::SameLine();
-    ImGui::Text("  smooth / 60 FPS");
+    ImGui::Dummy(ImVec2(232.0f, 106.0f));
+    ImGui::TextDisabled("Crosshair preview / native renderer");
     ImGui::EndChild();
     ImGui::PopStyleColor();
+    ImGui::Columns(1);
 }
 
-void DrawControls() {
-    ImGui::TextDisabled("RUNTIME CONFIGURATION");
-    ImGui::Text("Controls");
-    ImGui::TextDisabled("Tune the live preview without leaving the app.");
+void DrawPlayerMenu() {
+    ImGui::TextDisabled("GAMEPLAY / PLAYER DEBUG");
+    ImGui::SameLine(ImGui::GetWindowWidth() - 130.0f);
+    DrawPill("●  LOCAL", kAccent);
+    ImGui::Text("Player");
+    ImGui::TextDisabled("Inspect local and team presentation in the current session.");
     ImGui::Spacing();
     ImGui::Separator();
     ImGui::Spacing();
 
+    ImGui::Columns(2, "player_columns", false);
     ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.065f, 0.095f, 0.12f, 1.0f));
-    ImGui::BeginChild("ControlPanel", ImVec2(0.0f, 0.0f), false);
-    ImGui::Text("Render pipeline");
-    ImGui::TextDisabled("OpenGL ES 3 / NativeActivity");
+    ImGui::BeginChild("PlayerInfoCard", ImVec2(0.0f, 270.0f), false);
+    ImGui::Text("Local player");
+    ImGui::TextDisabled("COW.GamePlay.Player / ZLH.LocalPlayer");
     ImGui::Spacing();
-    ImGui::SliderFloat("Preview intensity", &gProgress, 0.0f, 1.0f, "%.0f%%");
-    ImGui::Checkbox("Live preview", &gLivePreview);
-    ImGui::Checkbox("Compact mode", &gCompactMode);
+    ImGui::Checkbox("Local player info", &gLocalPlayerInfo);
+    ImGui::Checkbox("Player status", &gPlayerStatus);
+    ImGui::Checkbox("Player names", &gPlayerNames);
+    ImGui::Checkbox("Distance labels", &gPlayerDistance);
     ImGui::Spacing();
-    ImGui::Text("Actions");
-    ImGui::Spacing();
-    if (ImGui::Button("APPLY CHANGES", ImVec2(190.0f, 48.0f))) {
-        gLivePreview = true;
-    }
-    ImGui::SameLine();
-    if (ImGui::Button("RESET", ImVec2(120.0f, 48.0f))) {
-        gProgress = 0.68f;
-        gLivePreview = true;
-        gCompactMode = false;
-    }
+    ImGui::TextDisabled("SESSION");
+    ImGui::Text("Team mode     %s", gPlayerStatus ? "ACTIVE" : "HIDDEN");
+    ImGui::Text("Camera        %s", gLocalPlayerInfo ? "TRACKING" : "PAUSED");
+    ImGui::Text("Player state  %s", gPlayerStatus ? "READY" : "OFF");
     ImGui::EndChild();
     ImGui::PopStyleColor();
+
+    ImGui::NextColumn();
+    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.065f, 0.095f, 0.12f, 1.0f));
+    ImGui::BeginChild("TeamInfoCard", ImVec2(0.0f, 270.0f), false);
+    ImGui::Text("Team presentation");
+    ImGui::TextDisabled("Markers follow the game's normal visibility rules.");
+    ImGui::Spacing();
+    ImGui::Checkbox("Teammate markers", &gTeammateMarkers);
+    ImGui::Checkbox("Enemy debug markers", &gEnemyMarkers);
+    ImGui::Spacing();
+    ImGui::Text("Marker preview");
+    ImGui::Spacing();
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.50f, 0.88f, 1.0f, 1.0f));
+    ImGui::BulletText("TEAMMATE  •  24 m");
+    ImGui::PopStyleColor();
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.54f, 0.42f, 1.0f));
+    ImGui::BulletText("ENEMY DEBUG  •  38 m");
+    ImGui::PopStyleColor();
+    ImGui::TextDisabled("Visibility: %s", gEnemyMarkers ? "debug preview" : "native only");
+    ImGui::EndChild();
+    ImGui::PopStyleColor();
+    ImGui::Columns(1);
 }
 
-void DrawSettings() {
-    ImGui::TextDisabled("PREFERENCES");
-    ImGui::Text("Settings");
-    ImGui::TextDisabled("Personalize the SDK shell for your workflow.");
+void DrawVisualsMenu() {
+    ImGui::TextDisabled("GAMEPLAY / EFFECTS & FEEDBACK");
+    ImGui::Text("Visuals");
+    ImGui::TextDisabled("Configure combat feedback and visual effect previews.");
     ImGui::Spacing();
     ImGui::Separator();
     ImGui::Spacing();
 
+    ImGui::Columns(2, "visual_columns", false);
     ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.065f, 0.095f, 0.12f, 1.0f));
-    ImGui::BeginChild("SettingsPanel", ImVec2(0.0f, 0.0f), false);
-    ImGui::Text("General");
+    ImGui::BeginChild("FeedbackCard", ImVec2(0.0f, 272.0f), false);
+    ImGui::Text("Combat feedback");
+    ImGui::TextDisabled("Signals already represented by the game's HUD.");
     ImGui::Spacing();
-    ImGui::Checkbox("Enable notifications", &gNotifications);
-    ImGui::Checkbox("Auto refresh data", &gAutoRefresh);
+    ImGui::Checkbox("Enemy fire hint", &gEnemyFireHint);
+    ImGui::Checkbox("Enemy footstep hint", &gEnemyFootstepHint);
+    ImGui::Checkbox("Hit marker", &gHitMarker);
+    ImGui::Checkbox("Screen effects", &gScreenEffects);
     ImGui::Spacing();
-    ImGui::Text("About this build");
-    ImGui::TextDisabled("Dear ImGui v1.92.9b");
-    ImGui::TextDisabled("Android NativeActivity + OpenGL ES 3");
-    ImGui::TextDisabled("Output: libSdk.so");
+    ImGui::SliderFloat("Effect intensity", &gEffectIntensity, 0.0f, 1.0f, "%.0f%%");
     ImGui::EndChild();
     ImGui::PopStyleColor();
+
+    ImGui::NextColumn();
+    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.065f, 0.095f, 0.12f, 1.0f));
+    ImGui::BeginChild("OutlineCard", ImVec2(0.0f, 272.0f), false);
+    ImGui::Text("Effect preview");
+    ImGui::TextDisabled("Renderer/material preview for development builds.");
+    ImGui::Spacing();
+    ImGui::Checkbox("Outline preview", &gOutlinePreview);
+    const char* outlineModes[] = {"Native", "Fresnel", "Silhouette"};
+    ImGui::Combo("Outline mode", &gOutlineMode, outlineModes, IM_ARRAYSIZE(outlineModes));
+    ImGui::Spacing();
+    ImGui::Text("Runtime");
+    ImGui::Text("Renderer       OpenGL ES 3");
+    ImGui::Text("Effect state   %s", gScreenEffects ? "ACTIVE" : "DISABLED");
+    ImGui::Text("Feedback       %s", gHitMarker ? "ENABLED" : "DISABLED");
+    ImGui::Spacing();
+    DrawPill(gOutlinePreview ? "●  PREVIEW ON" : "○  PREVIEW OFF",
+             gOutlinePreview ? kAccent : ImVec4(0.47f, 0.53f, 0.56f, 1.0f));
+    ImGui::EndChild();
+    ImGui::PopStyleColor();
+    ImGui::Columns(1);
 }
 
 void DrawUi() {
@@ -259,12 +336,12 @@ void DrawUi() {
     DrawSidebar();
     ImGui::SameLine(0.0f, 0.0f);
     ImGui::BeginChild("Content", ImVec2(0.0f, 0.0f), false);
-    if (gActiveMenu == 0) {
-        DrawOverview();
-    } else if (gActiveMenu == 1) {
-        DrawControls();
+    if (gActiveMenu == Menu::Aim) {
+        DrawAimMenu();
+    } else if (gActiveMenu == Menu::Player) {
+        DrawPlayerMenu();
     } else {
-        DrawSettings();
+        DrawVisualsMenu();
     }
     ImGui::EndChild();
     ImGui::End();
@@ -306,7 +383,6 @@ void InitEgl(android_app* app) {
     SetupTheme();
     ImGui_ImplAndroid_Init(app->window);
     ImGui_ImplOpenGL3_Init("#version 300 es");
-    gApp = app;
     gInitialized = true;
 }
 
