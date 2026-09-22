@@ -1,0 +1,332 @@
+09-22 14:39:03.834 13380 13380 E AndroidRuntime: FATAL EXCEPTION: main
+09-22 14:39:03.834 13380 13380 E AndroidRuntime: Process: com.android.vending, PID: 13380
+09-22 14:39:03.834 13380 13380 E AndroidRuntime: java.lang.NullPointerException: Attempt to invoke virtual method 'android.view.View android.view.View.findViewById(int)' on a null object reference
+09-22 14:39:03.834 13380 13380 E AndroidRuntime: 	at aoqc.run(PG:258)
+09-22 14:39:03.834 13380 13380 E AndroidRuntime: 	at android.os.Handler.handleCallback(Handler.java:1013)
+09-22 14:39:03.834 13380 13380 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:101)
+09-22 14:39:03.834 13380 13380 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-22 14:39:03.834 13380 13380 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-22 14:39:03.834 13380 13380 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-22 14:39:03.834 13380 13380 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-22 14:39:03.834 13380 13380 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-22 14:39:03.834 13380 13380 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: FATAL EXCEPTION: main
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: Process: com.google.android.apps.docs, PID: 15560
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: java.lang.RuntimeException: Unable to create application com.google.android.apps.docs.drive.DriveApplication: java.lang.RuntimeException: java.util.concurrent.TimeoutException
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at android.app.ActivityThread.handleBindApplication(ActivityThread.java:7948)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at android.app.ActivityThread.-$$Nest$mhandleBindApplication(Unknown Source:0)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2647)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:108)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: Caused by: java.lang.RuntimeException: java.util.concurrent.TimeoutException
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at vvt.a(PG:3)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at vqu.d(PG:5)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at anc.<init>(PG:25)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at and.a(Unknown Source:33)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at utb.a(PG:1)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at amg.onCreate(PG:13)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at com.google.android.apps.docs.drive.DriveApplication.onCreate(PG:32)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at android.app.Instrumentation.callApplicationOnCreate(Instrumentation.java:1316)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at android.app.ActivityThread.handleBindApplication(ActivityThread.java:7935)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	... 9 more
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: Caused by: java.util.concurrent.TimeoutException
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at vuu$a.run(PG:3)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at vvi.call(Unknown Source:9)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:307)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+09-22 21:50:55.306 15560 15560 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:1012)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: FATAL EXCEPTION: main
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: Process: com.ez.ths, PID: 5311
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: java.lang.VerifyError: Rejecting class com.studioarm.sigma.FFMainActivity that attempts to sub-type erroneous class com.unity3d.player.UnityPlayerActivity (declaration of 'com.studioarm.sigma.FFMainActivity' appears in /data/app/~~OxSz2YxNyhHMU2GXBhFLGQ==/com.ez.ths-4rIFMCMoCKeYrCQeWqKekw==/base.apk!classes2.dex)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at java.lang.Class.newInstance(Native Method)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at android.app.AppComponentFactory.instantiateActivity(AppComponentFactory.java:95)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at androidx.core.app.CoreComponentFactory.instantiateActivity(SourceFile:1)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at android.app.Instrumentation.newActivity(Instrumentation.java:1378)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4199)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4465)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:103)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:139)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:96)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2854)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:108)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: Caused by: java.lang.VerifyError: Verifier rejected class com.unity3d.player.UnityPlayerActivity: void com.unity3d.player.UnityPlayerActivity.<init>() failed to verify: void com.unity3d.player.UnityPlayerActivity.<init>(): [0x5] Expected initialization on uninitialized reference Precise Reference: java.lang.String (declaration of 'com.unity3d.player.UnityPlayerActivity' appears in /data/app/~~OxSz2YxNyhHMU2GXBhFLGQ==/com.ez.ths-4rIFMCMoCKeYrCQeWqKekw==/base.apk!classes2.dex)
+09-23 00:23:54.319  5311  5311 E AndroidRuntime: 	... 17 more
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: FATAL EXCEPTION: main
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: Process: com.ez.ths, PID: 7472
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: java.lang.VerifyError: Rejecting class com.studioarm.sigma.FFMainActivity that attempts to sub-type erroneous class com.unity3d.player.UnityPlayerActivity (declaration of 'com.studioarm.sigma.FFMainActivity' appears in /data/app/~~OxSz2YxNyhHMU2GXBhFLGQ==/com.ez.ths-4rIFMCMoCKeYrCQeWqKekw==/base.apk!classes2.dex)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at java.lang.Class.newInstance(Native Method)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at android.app.AppComponentFactory.instantiateActivity(AppComponentFactory.java:95)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at androidx.core.app.CoreComponentFactory.instantiateActivity(SourceFile:1)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at android.app.Instrumentation.newActivity(Instrumentation.java:1378)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4199)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4465)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:103)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:139)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:96)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2854)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:108)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: Caused by: java.lang.VerifyError: Verifier rejected class com.unity3d.player.UnityPlayerActivity: void com.unity3d.player.UnityPlayerActivity.<init>() failed to verify: void com.unity3d.player.UnityPlayerActivity.<init>(): [0x5] Expected initialization on uninitialized reference Precise Reference: java.lang.String (declaration of 'com.unity3d.player.UnityPlayerActivity' appears in /data/app/~~OxSz2YxNyhHMU2GXBhFLGQ==/com.ez.ths-4rIFMCMoCKeYrCQeWqKekw==/base.apk!classes2.dex)
+09-23 00:24:01.686  7472  7472 E AndroidRuntime: 	... 17 more
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: FATAL EXCEPTION: main
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: Process: com.ez.ths, PID: 19051
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: java.lang.VerifyError: Rejecting class com.studioarm.sigma.FFMainActivity that attempts to sub-type erroneous class com.unity3d.player.UnityPlayerActivity (declaration of 'com.studioarm.sigma.FFMainActivity' appears in /data/app/~~OxSz2YxNyhHMU2GXBhFLGQ==/com.ez.ths-4rIFMCMoCKeYrCQeWqKekw==/base.apk!classes2.dex)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at java.lang.Class.newInstance(Native Method)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at android.app.AppComponentFactory.instantiateActivity(AppComponentFactory.java:95)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at androidx.core.app.CoreComponentFactory.instantiateActivity(SourceFile:1)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at android.app.Instrumentation.newActivity(Instrumentation.java:1378)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4199)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4465)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:103)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:139)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:96)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2854)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:108)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: Caused by: java.lang.VerifyError: Verifier rejected class com.unity3d.player.UnityPlayerActivity: void com.unity3d.player.UnityPlayerActivity.<init>() failed to verify: void com.unity3d.player.UnityPlayerActivity.<init>(): [0x5] Expected initialization on uninitialized reference Precise Reference: java.lang.String (declaration of 'com.unity3d.player.UnityPlayerActivity' appears in /data/app/~~OxSz2YxNyhHMU2GXBhFLGQ==/com.ez.ths-4rIFMCMoCKeYrCQeWqKekw==/base.apk!classes2.dex)
+09-23 00:24:08.322 19051 19051 E AndroidRuntime: 	... 17 more
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: FATAL EXCEPTION: main
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: Process: com.LJNB66, PID: 30243
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: java.lang.NoSuchMethodError: No static method getLink()Ljava/lang/String; in class Lapkfuck/alertdialog/IOSdialog; or its super classes (declaration of 'apkfuck.alertdialog.IOSdialog' appears in /data/user/0/com.LJNB66/app_ded/As6bn9cvNXfpq9becnApAM2JKBK3qx4H.dex)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at apkfuck.alertdialog.enc.dialogenc3.۟ۦۨۡۢ(Unknown Source:6)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at apkfuck.alertdialog.IOSdialog$1.onClick(Unknown Source:71)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at android.view.View.performClick(View.java:7780)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at android.view.View.performClickInternal(View.java:7757)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at android.view.View.-$$Nest$mperformClickInternal(Unknown Source:0)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at android.view.View$PerformClick.run(View.java:30811)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at android.os.Handler.handleCallback(Handler.java:1013)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:101)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-23 00:36:33.807 30243 30243 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-23 00:51:21.176 30862 10549 E AndroidRuntime: FATAL EXCEPTION: voicechange-handler-thread
+09-23 00:51:21.176 30862 10549 E AndroidRuntime: Process: com.LJNB66, PID: 30862
+09-23 00:51:21.176 30862 10549 E AndroidRuntime: java.lang.NullPointerException: Attempt to invoke virtual method 'android.content.pm.PackageManager android.content.Context.getPackageManager()' on a null object reference
+09-23 00:51:21.176 30862 10549 E AndroidRuntime: 	at funkernel.q0$a.run(AddAppFragment.java:1)
+09-23 00:51:21.176 30862 10549 E AndroidRuntime: 	at android.os.Handler.handleCallback(Handler.java:1013)
+09-23 00:51:21.176 30862 10549 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:101)
+09-23 00:51:21.176 30862 10549 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 00:51:21.176 30862 10549 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 00:51:21.176 30862 10549 E AndroidRuntime: 	at android.os.HandlerThread.run(HandlerThread.java:67)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: FATAL EXCEPTION: main
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: Process: com.LJNB66:Plugin118, PID: 14728
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: java.lang.NoClassDefFoundError: Failed resolution of: Lbin/mt/signature/KillerApplication;
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at java.lang.Class.classForName(Native Method)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at java.lang.Class.forName(Class.java:536)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at java.lang.Class.forName(Class.java:467)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at cn.beingyi.sub.apps.SubApp.SubApplication.ˈ(:601)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at cn.beingyi.sub.apps.SubApp.SubApplication.createPackageContext(:532)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at android.app.ActivityThread.installProvider(ActivityThread.java:8741)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at android.app.ActivityThread.installContentProviders(ActivityThread.java:8272)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at android.app.ActivityThread.handleBindApplication(ActivityThread.java:7914)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at android.app.ActivityThread.-$$Nest$mhandleBindApplication(Unknown Source:0)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2647)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:108)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: Caused by: java.lang.ClassNotFoundException: bin.mt.signature.KillerApplication
+09-23 00:52:01.614 14728 14728 E AndroidRuntime: 	... 17 more
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: FATAL EXCEPTION: Thread-2
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: Process: com.LJNB66:Plugin118, PID: 14728
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: java.lang.RuntimeException: Adding window failed
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.view.ViewRootImpl.setView(ViewRootImpl.java:1569)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.view.WindowManagerGlobal.addView(WindowManagerGlobal.java:436)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.view.WindowManagerImpl.addView(WindowManagerImpl.java:164)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.widget.ToastPresenter.addToastView(ToastPresenter.java:414)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.widget.ToastPresenter.show(ToastPresenter.java:333)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.widget.ToastPresenter.show(ToastPresenter.java:304)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.widget.Toast$TN.handleShow(Toast.java:819)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.widget.Toast$TN$1.handleMessage(Toast.java:746)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:108)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at ˆ.ʿ.ʿ.ˋ.ˎ$ʿ.run(:118)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: Caused by: java.lang.SecurityException: Package  not in UID 10394
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3093)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.os.Parcel.createException(Parcel.java:3077)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.os.Parcel.readException(Parcel.java:3060)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.os.Parcel.readException(Parcel.java:3002)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.view.IWindowSession$Stub$Proxy.addToDisplayAsUser(IWindowSession.java:1498)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.view.ViewRootImpl.setView(ViewRootImpl.java:1547)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	... 11 more
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: Caused by: android.os.RemoteException: Remote stack trace:
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at com.android.server.wm.WindowManagerService.doesAddToastWindowRequireToken(WindowManagerService.java:2516)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at com.android.server.wm.WindowManagerService.addWindow(WindowManagerService.java:2040)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at com.android.server.wm.Session.addToDisplayAsUser(Session.java:274)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at android.view.IWindowSession$Stub.onTransact(IWindowSession.java:727)
+09-23 00:52:01.754 14728 14879 E AndroidRuntime: 	at com.android.server.wm.Session.onTransact(Session.java:238)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: FATAL EXCEPTION: main
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: Process: com.ez.ths, PID: 21127
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: java.lang.UnsatisfiedLinkError: dlopen failed: library "libc++_shared.so" not found: needed by /data/app/~~nlj-M2ftzGjtZsmRD27pBQ==/com.ez.ths-JCNog769kha3cSYtxBA-tA==/lib/arm64/libSdk.so in namespace clns-5
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1082)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1003)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at java.lang.System.loadLibrary(System.java:1661)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at com.unity3d.player.UnityPlayerActivity.onCreate(SourceFile:5)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at com.studioarm.sigma.FFMainActivity.onCreate(SourceFile:16)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:8964)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:8921)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1456)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4293)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4465)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:103)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:139)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:96)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2854)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:108)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-23 02:10:39.800 21127 21127 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-23 02:10:44.201 25920 25920 D AndroidRuntime: Shutting down VM
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: FATAL EXCEPTION: main
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: Process: com.ez.ths, PID: 25920
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: java.lang.UnsatisfiedLinkError: dlopen failed: library "libc++_shared.so" not found: needed by /data/app/~~nlj-M2ftzGjtZsmRD27pBQ==/com.ez.ths-JCNog769kha3cSYtxBA-tA==/lib/arm64/libSdk.so in namespace clns-5
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1082)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1003)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at java.lang.System.loadLibrary(System.java:1661)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at com.unity3d.player.UnityPlayerActivity.onCreate(SourceFile:5)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at com.studioarm.sigma.FFMainActivity.onCreate(SourceFile:16)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:8964)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:8921)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1456)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4293)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4465)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:103)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:139)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:96)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2854)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:108)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-23 02:10:44.202 25920 25920 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: FATAL EXCEPTION: main
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: Process: com.ez.ths, PID: 17675
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: java.lang.UnsatisfiedLinkError: dlopen failed: library "libc++_shared.so" not found: needed by /data/app/~~nlj-M2ftzGjtZsmRD27pBQ==/com.ez.ths-JCNog769kha3cSYtxBA-tA==/lib/arm64/libSdk.so in namespace clns-5
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1082)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1003)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at java.lang.System.loadLibrary(System.java:1661)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at com.unity3d.player.UnityPlayerActivity.onCreate(SourceFile:5)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at com.studioarm.sigma.FFMainActivity.onCreate(SourceFile:16)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:8964)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:8921)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1456)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4293)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4465)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:103)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:139)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:96)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2854)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:108)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-23 02:10:49.776 17675 17675 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-23 02:13:32.359 16099 16099 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: FATAL EXCEPTION: main
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: Process: com.example.modernimgui, PID: 17958
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: java.lang.UnsatisfiedLinkError: Unable to load native library "/data/app/~~4_IjcUiFNyo4EZWEe7NBiw==/com.example.modernimgui-e15JKL2io6OAZM_LSlMM2g==/lib/arm64/libSdk.so": undefined symbol: ANativeActivity_onCreate
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.app.NativeActivity.onCreate(NativeActivity.java:178)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:8964)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:8921)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1456)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4293)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4465)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:103)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:139)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:96)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2854)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:108)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-23 02:13:52.190 17958 17958 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: FATAL EXCEPTION: main
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: Process: com.example.modernimgui, PID: 18340
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: java.lang.UnsatisfiedLinkError: Unable to load native library "/data/app/~~4_IjcUiFNyo4EZWEe7NBiw==/com.example.modernimgui-e15JKL2io6OAZM_LSlMM2g==/lib/arm64/libSdk.so": undefined symbol: ANativeActivity_onCreate
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.app.NativeActivity.onCreate(NativeActivity.java:178)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:8964)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:8921)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1456)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4293)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4465)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:103)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:139)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:96)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2854)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:108)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-23 02:13:57.303 18340 18340 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: FATAL EXCEPTION: main
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: Process: com.example.modernimgui, PID: 8158
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: java.lang.UnsatisfiedLinkError: Unable to load native library "/data/app/~~gpUQdOmpEucqQyIBn6Z3KQ==/com.example.modernimgui-R5nM4Db14RulnwTManr7Cg==/lib/arm64/libSdk.so": undefined symbol: ANativeActivity_onCreate
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.app.NativeActivity.onCreate(NativeActivity.java:178)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:8964)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.app.Activity.performCreate(Activity.java:8921)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1456)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4293)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4465)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:103)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:139)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:96)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2854)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:108)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:226)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:328)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9242)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:594)
+09-23 02:21:29.347  8158  8158 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1099)
+09-23 02:22:03.560  8534  8534 I ModernImGuiSdk: Sdk loaded through System.loadLibrary
+09-23 02:35:05.914 17174 17174 I ModernImGuiSdk: Sdk loaded through System.loadLibrary
+09-23 02:35:05.939 17174 32276 I ModernImGuiSdk: eglSwapBuffers hook installed
+09-23 02:36:46.519  6037  6037 I AndroidRuntime: Using default boot image
+09-23 02:36:46.519  6037  6037 I AndroidRuntime: Leaving lock profiling enabled
+09-23 02:38:50.625 20592 20592 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-23 02:38:56.388  6037  6037 I AndroidRuntime: VM exiting with result code 0.
+09-23 02:39:03.548 13933 13933 I AndroidRuntime: Using default boot image
+09-23 02:39:03.548 13933 13933 I AndroidRuntime: Leaving lock profiling enabled
+09-23 02:40:32.008  4902  4902 I ModernImGuiSdk: Sdk loaded through System.loadLibrary
+09-23 02:40:32.036  4902 18575 I ModernImGuiSdk: eglSwapBuffers hook installed

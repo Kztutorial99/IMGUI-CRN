@@ -21,6 +21,8 @@ using EglSwapBuffersFn = EGLBoolean (*)(EGLDisplay, EGLSurface);
 EglSwapBuffersFn gOriginalSwapBuffers = nullptr;
 std::mutex gPatchMutex;
 std::atomic_bool gHookInstalled = false;
+std::atomic_uint gSwapHookCalls = 0;
+std::atomic_bool gFirstFrameLogged = false;
 thread_local bool gInsideHook = false;
 
 EGLBoolean HookedEglSwapBuffers(EGLDisplay display, EGLSurface surface);
@@ -104,7 +106,11 @@ bool PatchRelocations(ElfW(Addr) base,
     return patched;
 }
 
-int PatchLoadedObject(struct dl_phdr_info* info, size_t, void*) {
+struct PatchState {
+    int patchedObjects = 0;
+};
+
+int PatchLoadedObject(struct dl_phdr_info* info, size_t, void* userData) {
     const char* name = info->dlpi_name == nullptr ? "" : info->dlpi_name;
     if (std::strstr(name, "libSdk.so") != nullptr ||
         std::strstr(name, "libEGL.so") != nullptr) {
@@ -164,10 +170,17 @@ int PatchLoadedObject(struct dl_phdr_info* info, size_t, void*) {
         return 0;
     }
     const size_t entryCount = jumpRelocationBytes / entrySize;
-    return PatchRelocations(info->dlpi_addr, symtab, strtab, jumpRelocations,
-                            entryCount, rela)
-               ? 1
-               : 0;
+    if (PatchRelocations(info->dlpi_addr, symtab, strtab, jumpRelocations,
+                         entryCount, rela)) {
+        auto* state = static_cast<PatchState*>(userData);
+        if (state != nullptr) {
+            ++state->patchedObjects;
+        }
+    }
+    // Returning non-zero stops dl_iterate_phdr immediately. Keep walking so
+    // Unity and its bootstrap libraries are all patched, not just the first
+    // system/library object that imports eglSwapBuffers.
+    return 0;
 }
 
 EGLBoolean HookedEglSwapBuffers(EGLDisplay display, EGLSurface surface) {
@@ -178,17 +191,41 @@ EGLBoolean HookedEglSwapBuffers(EGLDisplay display, EGLSurface surface) {
     }
 
     gInsideHook = true;
+    const unsigned int callNumber = gSwapHookCalls.fetch_add(1);
+    if (callNumber == 0) {
+        __android_log_print(ANDROID_LOG_INFO, kLogTag,
+                            "eglSwapBuffers hook called for the first time");
+    }
     EGLContext context = eglGetCurrentContext();
     if (context != EGL_NO_CONTEXT) {
         EGLint width = 0;
         EGLint height = 0;
         if (eglQuerySurface(display, surface, EGL_WIDTH, &width) == EGL_TRUE &&
             eglQuerySurface(display, surface, EGL_HEIGHT, &height) == EGL_TRUE &&
-            width > 0 && height > 0 &&
-            Sdk_InitializeOnCurrentContext(nullptr)) {
-            Sdk_SetDisplaySize(width, height);
-            Sdk_RenderOnCurrentContext();
+            width > 0 && height > 0) {
+            const bool initialized = Sdk_InitializeOnCurrentContext(nullptr);
+            if (!initialized) {
+                __android_log_print(
+                    ANDROID_LOG_ERROR, kLogTag,
+                    "ImGui OpenGL backend initialization failed (%dx%d)",
+                    width, height);
+            } else {
+                Sdk_SetDisplaySize(width, height);
+                Sdk_RenderOnCurrentContext();
+                if (!gFirstFrameLogged.exchange(true)) {
+                    __android_log_print(
+                        ANDROID_LOG_INFO, kLogTag,
+                        "ImGui rendered on host EGL surface (%dx%d)", width,
+                        height);
+                }
+            }
+        } else if (callNumber == 0) {
+            __android_log_print(ANDROID_LOG_ERROR, kLogTag,
+                                "Unable to query host EGL surface dimensions");
         }
+    } else if (callNumber == 0) {
+        __android_log_print(ANDROID_LOG_ERROR, kLogTag,
+                            "eglSwapBuffers hook has no current EGL context");
     }
 
     EGLBoolean result = gOriginalSwapBuffers(display, surface);
@@ -198,11 +235,13 @@ EGLBoolean HookedEglSwapBuffers(EGLDisplay display, EGLSurface surface) {
 
 void HookThread() {
     for (int attempt = 0; attempt < 120 && !gHookInstalled; ++attempt) {
-        const int patched = dl_iterate_phdr(PatchLoadedObject, nullptr);
-        if (patched > 0) {
+        PatchState state;
+        dl_iterate_phdr(PatchLoadedObject, &state);
+        if (state.patchedObjects > 0) {
             gHookInstalled = true;
             __android_log_print(ANDROID_LOG_INFO, kLogTag,
-                                "eglSwapBuffers hook installed");
+                                "eglSwapBuffers hook installed in %d object(s)",
+                                state.patchedObjects);
             return;
         }
         usleep(100000);
