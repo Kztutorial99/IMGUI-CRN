@@ -55,14 +55,11 @@ target_compile_definitions(imgui PRIVATE IMGUI_IMPL_OPENGL_ES3)
 set(NATIVE_APP_GLUE
     ${CMAKE_ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c
 )
-add_library(native_app_glue STATIC ${NATIVE_APP_GLUE})
-target_include_directories(native_app_glue PUBLIC
-    ${CMAKE_ANDROID_NDK}/sources/android/native_app_glue
-)
 
 add_library(Sdk SHARED
     main.cpp
     egl_hook.cpp
+    ${NATIVE_APP_GLUE}
 )
 set_target_properties(Sdk PROPERTIES OUTPUT_NAME "Sdk")
 
@@ -72,7 +69,6 @@ target_include_directories(Sdk PRIVATE
 
 target_link_libraries(Sdk
     imgui
-    native_app_glue
     android
     EGL
     GLESv3

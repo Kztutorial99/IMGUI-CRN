@@ -85,7 +85,9 @@ bool InitImGuiBackend(ANativeWindow* window) {
     SetupTheme();
     gAndroidBackend = window != nullptr;
     if (gAndroidBackend) {
-        ImGui_ImplAndroid_Init(window);
+        if (!ImGui_ImplAndroid_Init(window)) {
+            LogError("ImGui Android backend initialization failed");
+        }
     }
     const GLubyte* glVersion = glGetString(GL_VERSION);
     __android_log_print(

@@ -17,8 +17,15 @@ namespace {
 
 constexpr char kLogTag[] = "ModernImGuiSdk";
 using EglSwapBuffersFn = EGLBoolean (*)(EGLDisplay, EGLSurface);
+using EglSwapBuffersWithDamageFn =
+    EGLBoolean (*)(EGLDisplay, EGLSurface, const EGLint*, EGLint);
+using EglProcAddress = __eglMustCastToProperFunctionPointerType;
+using EglGetProcAddressFn = EglProcAddress (*)(const char*);
 
 EglSwapBuffersFn gOriginalSwapBuffers = nullptr;
+EglSwapBuffersWithDamageFn gOriginalSwapBuffersWithDamageKHR = nullptr;
+EglSwapBuffersWithDamageFn gOriginalSwapBuffersWithDamageEXT = nullptr;
+EglGetProcAddressFn gOriginalGetProcAddress = nullptr;
 std::mutex gPatchMutex;
 std::atomic_bool gHookInstalled = false;
 std::atomic_uint gSwapHookCalls = 0;
@@ -26,6 +33,11 @@ std::atomic_bool gFirstFrameLogged = false;
 thread_local bool gInsideHook = false;
 
 EGLBoolean HookedEglSwapBuffers(EGLDisplay display, EGLSurface surface);
+EGLBoolean HookedEglSwapBuffersWithDamageKHR(
+    EGLDisplay display, EGLSurface surface, const EGLint* rects, EGLint nRects);
+EGLBoolean HookedEglSwapBuffersWithDamageEXT(
+    EGLDisplay display, EGLSurface surface, const EGLint* rects, EGLint nRects);
+EglProcAddress HookedEglGetProcAddress(const char* name);
 
 uintptr_t DynamicAddress(ElfW(Addr) base, ElfW(Addr) address) {
     return static_cast<uintptr_t>(base + address);
@@ -39,22 +51,31 @@ size_t RelocationSymbolIndex(ElfW(Xword) info) {
 #endif
 }
 
-bool PatchSlot(void** slot) {
+bool PatchSlot(void** slot, void* replacement, void** original,
+               const char* symbolName) {
     if (slot == nullptr) {
         return false;
     }
 
     std::lock_guard<std::mutex> lock(gPatchMutex);
-    if (*slot == reinterpret_cast<void*>(&HookedEglSwapBuffers)) {
+    if (*slot == replacement) {
         return false;
     }
 
-    if (gOriginalSwapBuffers == nullptr) {
-        gOriginalSwapBuffers = reinterpret_cast<EglSwapBuffersFn>(*slot);
+    if (original == nullptr) {
+        return false;
     }
-    if (gOriginalSwapBuffers == nullptr) {
-        gOriginalSwapBuffers =
-            reinterpret_cast<EglSwapBuffersFn>(dlsym(RTLD_NEXT, "eglSwapBuffers"));
+    if (*original == nullptr) {
+        *original = *slot;
+    }
+    if (*original == nullptr) {
+        *original = dlsym(RTLD_NEXT, symbolName);
+    }
+    if (*original == nullptr) {
+        __android_log_print(ANDROID_LOG_WARN, kLogTag,
+                            "Skipping %s: original symbol is unresolved",
+                            symbolName);
+        return false;
     }
 
     const long pageSize = sysconf(_SC_PAGESIZE);
@@ -66,12 +87,62 @@ bool PatchSlot(void** slot) {
         slotAddress & ~static_cast<uintptr_t>(pageSize - 1);
     if (mprotect(reinterpret_cast<void*>(pageStart),
                  static_cast<size_t>(pageSize), PROT_READ | PROT_WRITE) != 0) {
+        __android_log_print(ANDROID_LOG_WARN, kLogTag,
+                            "mprotect failed while patching %s", symbolName);
         return false;
     }
-    *slot = reinterpret_cast<void*>(&HookedEglSwapBuffers);
-    mprotect(reinterpret_cast<void*>(pageStart),
-             static_cast<size_t>(pageSize), PROT_READ);
+    *slot = replacement;
+    if (mprotect(reinterpret_cast<void*>(pageStart),
+                 static_cast<size_t>(pageSize), PROT_READ) != 0) {
+        __android_log_print(ANDROID_LOG_WARN, kLogTag,
+                            "Unable to restore GOT protection after patching %s",
+                            symbolName);
+    }
     return true;
+}
+
+bool IsSwapSymbol(const char* symbolName) {
+    return std::strcmp(symbolName, "eglSwapBuffers") == 0 ||
+           std::strcmp(symbolName, "eglSwapBuffersWithDamageKHR") == 0 ||
+           std::strcmp(symbolName, "eglSwapBuffersWithDamageEXT") == 0;
+}
+
+bool IsHookSymbol(const char* symbolName) {
+    return IsSwapSymbol(symbolName) ||
+           std::strcmp(symbolName, "eglGetProcAddress") == 0;
+}
+
+void* ReplacementForSymbol(const char* symbolName, void** original) {
+    if (std::strcmp(symbolName, "eglSwapBuffers") == 0) {
+        return reinterpret_cast<void*>(&HookedEglSwapBuffers);
+    }
+    if (std::strcmp(symbolName, "eglSwapBuffersWithDamageKHR") == 0) {
+        return reinterpret_cast<void*>(&HookedEglSwapBuffersWithDamageKHR);
+    }
+    if (std::strcmp(symbolName, "eglSwapBuffersWithDamageEXT") == 0) {
+        return reinterpret_cast<void*>(&HookedEglSwapBuffersWithDamageEXT);
+    }
+    if (std::strcmp(symbolName, "eglGetProcAddress") == 0) {
+        return reinterpret_cast<void*>(&HookedEglGetProcAddress);
+    }
+    *original = nullptr;
+    return nullptr;
+}
+
+void** OriginalForSymbol(const char* symbolName) {
+    if (std::strcmp(symbolName, "eglSwapBuffers") == 0) {
+        return reinterpret_cast<void**>(&gOriginalSwapBuffers);
+    }
+    if (std::strcmp(symbolName, "eglSwapBuffersWithDamageKHR") == 0) {
+        return reinterpret_cast<void**>(&gOriginalSwapBuffersWithDamageKHR);
+    }
+    if (std::strcmp(symbolName, "eglSwapBuffersWithDamageEXT") == 0) {
+        return reinterpret_cast<void**>(&gOriginalSwapBuffersWithDamageEXT);
+    }
+    if (std::strcmp(symbolName, "eglGetProcAddress") == 0) {
+        return reinterpret_cast<void**>(&gOriginalGetProcAddress);
+    }
+    return nullptr;
 }
 
 bool PatchRelocations(ElfW(Addr) base,
@@ -96,12 +167,17 @@ bool PatchRelocations(ElfW(Addr) base,
 
         const size_t symbolIndex = RelocationSymbolIndex(info);
         const char* symbolName = strtab + symtab[symbolIndex].st_name;
-        if (std::strcmp(symbolName, "eglSwapBuffers") != 0) {
+        if (!IsHookSymbol(symbolName)) {
             continue;
         }
 
+        void** original = OriginalForSymbol(symbolName);
+        void* replacement = ReplacementForSymbol(symbolName, original);
         auto** slot = reinterpret_cast<void**>(DynamicAddress(base, offset));
-        patched = PatchSlot(slot) || patched;
+        if (replacement != nullptr && original != nullptr &&
+            PatchSlot(slot, replacement, original, symbolName)) {
+            patched = true;
+        }
     }
     return patched;
 }
@@ -176,11 +252,56 @@ int PatchLoadedObject(struct dl_phdr_info* info, size_t, void* userData) {
         if (state != nullptr) {
             ++state->patchedObjects;
         }
+        __android_log_print(
+            ANDROID_LOG_INFO, kLogTag,
+            "Patched EGL swap import in object: %s",
+            name[0] == '\0' ? "<main executable>" : name);
     }
     // Returning non-zero stops dl_iterate_phdr immediately. Keep walking so
     // Unity and its bootstrap libraries are all patched, not just the first
     // system/library object that imports eglSwapBuffers.
     return 0;
+}
+
+void RenderOnSwap(EGLDisplay display, EGLSurface surface, const char* symbolName,
+                  unsigned int callNumber) {
+    if (eglGetCurrentContext() == EGL_NO_CONTEXT) {
+        if (callNumber == 0) {
+            __android_log_print(ANDROID_LOG_ERROR, kLogTag,
+                                "%s has no current EGL context", symbolName);
+        }
+        return;
+    }
+
+    EGLint width = 0;
+    EGLint height = 0;
+    if (eglQuerySurface(display, surface, EGL_WIDTH, &width) != EGL_TRUE ||
+        eglQuerySurface(display, surface, EGL_HEIGHT, &height) != EGL_TRUE ||
+        width <= 0 || height <= 0) {
+        if (callNumber == 0) {
+            __android_log_print(ANDROID_LOG_ERROR, kLogTag,
+                                "%s could not query surface dimensions",
+                                symbolName);
+        }
+        return;
+    }
+
+    if (!Sdk_InitializeOnCurrentContext(nullptr)) {
+        if (callNumber == 0) {
+            __android_log_print(ANDROID_LOG_ERROR, kLogTag,
+                                "ImGui initialization failed on %s (%dx%d)",
+                                symbolName, width, height);
+        }
+        return;
+    }
+
+    Sdk_SetDisplaySize(width, height);
+    Sdk_RenderOnCurrentContext();
+    if (!gFirstFrameLogged.exchange(true)) {
+        __android_log_print(ANDROID_LOG_INFO, kLogTag,
+                            "ImGui rendered on %s (%dx%d)", symbolName, width,
+                            height);
+    }
 }
 
 EGLBoolean HookedEglSwapBuffers(EGLDisplay display, EGLSurface surface) {
@@ -196,58 +317,114 @@ EGLBoolean HookedEglSwapBuffers(EGLDisplay display, EGLSurface surface) {
         __android_log_print(ANDROID_LOG_INFO, kLogTag,
                             "eglSwapBuffers hook called for the first time");
     }
-    EGLContext context = eglGetCurrentContext();
-    if (context != EGL_NO_CONTEXT) {
-        EGLint width = 0;
-        EGLint height = 0;
-        if (eglQuerySurface(display, surface, EGL_WIDTH, &width) == EGL_TRUE &&
-            eglQuerySurface(display, surface, EGL_HEIGHT, &height) == EGL_TRUE &&
-            width > 0 && height > 0) {
-            const bool initialized = Sdk_InitializeOnCurrentContext(nullptr);
-            if (!initialized) {
-                __android_log_print(
-                    ANDROID_LOG_ERROR, kLogTag,
-                    "ImGui OpenGL backend initialization failed (%dx%d)",
-                    width, height);
-            } else {
-                Sdk_SetDisplaySize(width, height);
-                Sdk_RenderOnCurrentContext();
-                if (!gFirstFrameLogged.exchange(true)) {
-                    __android_log_print(
-                        ANDROID_LOG_INFO, kLogTag,
-                        "ImGui rendered on host EGL surface (%dx%d)", width,
-                        height);
-                }
-            }
-        } else if (callNumber == 0) {
-            __android_log_print(ANDROID_LOG_ERROR, kLogTag,
-                                "Unable to query host EGL surface dimensions");
-        }
-    } else if (callNumber == 0) {
-        __android_log_print(ANDROID_LOG_ERROR, kLogTag,
-                            "eglSwapBuffers hook has no current EGL context");
-    }
+    RenderOnSwap(display, surface, "eglSwapBuffers", callNumber);
 
     EGLBoolean result = gOriginalSwapBuffers(display, surface);
     gInsideHook = false;
     return result;
 }
 
+EGLBoolean HookedEglSwapBuffersWithDamageKHR(
+    EGLDisplay display, EGLSurface surface, const EGLint* rects, EGLint nRects) {
+    if (gInsideHook || gOriginalSwapBuffersWithDamageKHR == nullptr) {
+        return gOriginalSwapBuffersWithDamageKHR == nullptr
+                   ? EGL_FALSE
+                   : gOriginalSwapBuffersWithDamageKHR(display, surface, rects,
+                                                       nRects);
+    }
+    gInsideHook = true;
+    const unsigned int callNumber = gSwapHookCalls.fetch_add(1);
+    if (callNumber == 0) {
+        __android_log_print(ANDROID_LOG_INFO, kLogTag,
+                            "eglSwapBuffersWithDamageKHR hook called");
+    }
+    RenderOnSwap(display, surface, "eglSwapBuffersWithDamageKHR", callNumber);
+    EGLBoolean result =
+        gOriginalSwapBuffersWithDamageKHR(display, surface, rects, nRects);
+    gInsideHook = false;
+    return result;
+}
+
+EGLBoolean HookedEglSwapBuffersWithDamageEXT(
+    EGLDisplay display, EGLSurface surface, const EGLint* rects, EGLint nRects) {
+    if (gInsideHook || gOriginalSwapBuffersWithDamageEXT == nullptr) {
+        return gOriginalSwapBuffersWithDamageEXT == nullptr
+                   ? EGL_FALSE
+                   : gOriginalSwapBuffersWithDamageEXT(display, surface, rects,
+                                                       nRects);
+    }
+    gInsideHook = true;
+    const unsigned int callNumber = gSwapHookCalls.fetch_add(1);
+    if (callNumber == 0) {
+        __android_log_print(ANDROID_LOG_INFO, kLogTag,
+                            "eglSwapBuffersWithDamageEXT hook called");
+    }
+    RenderOnSwap(display, surface, "eglSwapBuffersWithDamageEXT", callNumber);
+    EGLBoolean result =
+        gOriginalSwapBuffersWithDamageEXT(display, surface, rects, nRects);
+    gInsideHook = false;
+    return result;
+}
+
+EglProcAddress HookedEglGetProcAddress(const char* name) {
+    if (gOriginalGetProcAddress == nullptr) {
+        return nullptr;
+    }
+
+    EglProcAddress resolved = gOriginalGetProcAddress(name);
+    if (name == nullptr || resolved == nullptr) {
+        return resolved;
+    }
+
+    if (std::strcmp(name, "eglSwapBuffers") == 0) {
+        if (gOriginalSwapBuffers == nullptr) {
+            gOriginalSwapBuffers = reinterpret_cast<EglSwapBuffersFn>(resolved);
+        }
+        return reinterpret_cast<EglProcAddress>(&HookedEglSwapBuffers);
+    }
+    if (std::strcmp(name, "eglSwapBuffersWithDamageKHR") == 0) {
+        if (gOriginalSwapBuffersWithDamageKHR == nullptr) {
+            gOriginalSwapBuffersWithDamageKHR =
+                reinterpret_cast<EglSwapBuffersWithDamageFn>(resolved);
+        }
+        return reinterpret_cast<EglProcAddress>(
+            &HookedEglSwapBuffersWithDamageKHR);
+    }
+    if (std::strcmp(name, "eglSwapBuffersWithDamageEXT") == 0) {
+        if (gOriginalSwapBuffersWithDamageEXT == nullptr) {
+            gOriginalSwapBuffersWithDamageEXT =
+                reinterpret_cast<EglSwapBuffersWithDamageFn>(resolved);
+        }
+        return reinterpret_cast<EglProcAddress>(
+            &HookedEglSwapBuffersWithDamageEXT);
+    }
+    return resolved;
+}
+
 void HookThread() {
-    for (int attempt = 0; attempt < 120 && !gHookInstalled; ++attempt) {
+    bool foundAnyObject = false;
+    // Unity may load libunity.so after JNI_OnLoad returns. Keep scanning after
+    // the first match so a bootstrap library does not prevent the actual
+    // renderer library from being patched later.
+    for (int attempt = 0; attempt < 300; ++attempt) {
         PatchState state;
         dl_iterate_phdr(PatchLoadedObject, &state);
         if (state.patchedObjects > 0) {
-            gHookInstalled = true;
-            __android_log_print(ANDROID_LOG_INFO, kLogTag,
-                                "eglSwapBuffers hook installed in %d object(s)",
-                                state.patchedObjects);
-            return;
+            foundAnyObject = true;
+            const bool firstInstall = !gHookInstalled.exchange(true);
+            __android_log_print(
+                ANDROID_LOG_INFO, kLogTag,
+                firstInstall
+                    ? "eglSwapBuffers hook installed in %d object(s)"
+                    : "eglSwapBuffers hook patched %d additional object(s)",
+                state.patchedObjects);
         }
         usleep(100000);
     }
-    __android_log_print(ANDROID_LOG_ERROR, kLogTag,
-                        "Unable to find an eglSwapBuffers relocation");
+    if (!foundAnyObject) {
+        __android_log_print(ANDROID_LOG_ERROR, kLogTag,
+                            "Unable to find EGL swap/proc relocations");
+    }
 }
 
 }  // namespace
