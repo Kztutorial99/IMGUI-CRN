@@ -116,3 +116,80 @@ Dump ini berasal dari versi `1.0.159`. Address seperti `0x46a873c` adalah
 address hasil dump untuk versi tersebut, bukan API publik. Update game dapat
 mengubah address, class, field, dan alur data. Source ImGui sebaiknya memiliki
 adapter terpisah dari layer UI agar perubahan runtime tidak merusak desain.
+
+## Fokus gameplay: Aim, Player, dan efek in-game
+
+Pencarian lanjutan menemukan sistem gameplay yang lebih dekat dengan kebutuhan
+menu in-game:
+
+### Aim dan crosshair
+
+Indikator yang ditemukan:
+
+- `ZLH.CameraManager.TickAimAssist()` dan `TestAimAssist()` sekitar baris
+  21252–21258.
+- Parameter `sight_aim_assist_snap_range`,
+  `sight_aim_assist_dist_falloff`, `sight_aim_assist_distpriority`, dan
+  `sight_aim_assist` sekitar baris 21564–21573.
+- `ZLH.UISensiSettingData` memiliki `HipAimAssist`, `SightAimAssist`, dan
+  `AimAssistVertical` sekitar baris 22784–22786.
+- Ada `AimAssistAutoLock`, `AimAssistOnSighting`, dan `CrossHairConfig`
+  sekitar baris 23856–23857 serta 21610.
+- `ZLH.Player.get_AimDir()` terlihat sekitar baris 22657.
+
+**UI yang aman untuk dibuat:** menu Aim yang menampilkan status setting aim
+resmi, sensitivity hip/scope, pilihan crosshair, dan indikator visual ketika
+assist resmi aktif. Nilai konfigurasi hanya diubah melalui API settings resmi.
+
+**Yang tidak dibuat:** aimbot, auto-lock target dengan mengubah rotasi player,
+target selection tersembunyi, atau pengiriman action/network paksa.
+
+### Player, enemy, dan teammate
+
+Indikator yang ditemukan:
+
+- `ZLH.LocalPlayer` dan `ZLH.NetworkPlayer` sekitar baris 22595–22639.
+- `ZLH.Player.GetAllEnemys()` dan `GetAllTeammates()` sekitar baris
+  22450–22451.
+- `ZLH.Player.get_PlayerPos()` sekitar baris 22566.
+- `ZLH.Player.SetEnemyEffect(Boolean)` sekitar baris 22581.
+- `COW.HUD.UIHudNameEnemyController`,
+  `UIHudNameLocalController`, dan `UIHudTeammateBriefController` ada di
+  area controller HUD sekitar baris 302658–302853.
+
+**UI yang aman untuk dibuat:** panel Player yang menampilkan player lokal,
+teammate, nama, status, dan marker yang mengikuti aturan visibility game.
+Marker hanya boleh muncul jika entity memang terdeteksi/terlihat oleh sistem
+HUD normal.
+
+**Yang tidak dibuat:** ESP, wallhack, skeleton melalui dinding, membaca posisi
+enemy yang tidak terlihat, atau mengubah `SetEnemyEffect` menjadi highlight
+global.
+
+### Combat feedback dan efek visual
+
+Indikator yang ditemukan:
+
+- `EnemyFootStepSetting` dan `EnemyFireSetting` sekitar baris 5872–5873.
+- `EnemyFireHint` pada `UIOperationSettingController` sekitar baris 6136.
+- `ZLH.Player` menyimpan `PlayerPos`, `AimDir`, dan data target/rotasi di
+  area sekitar baris 22566–22657.
+- Ada konfigurasi recoil di `ZLH.CameraManager` dan `V.RecoilConfig` sekitar
+  baris 21268–21270.
+
+**UI yang aman untuk dibuat:** menu Visual/Combat berisi crosshair preview,
+hit marker yang berasal dari event game normal, indikator enemy fire/footstep
+yang memang disediakan game, dan preview recoil/camera feedback.
+
+## Rekomendasi menu gameplay
+
+Jika tiga menu yang diinginkan benar-benar berorientasi in-game, struktur yang
+paling sesuai adalah:
+
+1. **Aim** — status aim assist resmi, sensitivity, scope, crosshair.
+2. **Player** — status player lokal, teammate, marker visibility normal.
+3. **Visuals** — hit marker, enemy fire/footstep hint, recoil dan screen effect.
+
+Struktur ini memakai sistem yang benar-benar ditemukan di dump, tetapi tetap
+memisahkan UI diagnostik/konfigurasi dari fitur yang memberi keuntungan tidak
+adil pada multiplayer.
