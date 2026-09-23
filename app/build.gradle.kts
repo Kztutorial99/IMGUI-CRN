@@ -8,26 +8,21 @@ android {
 
     defaultConfig {
         applicationId = "com.example.modernimgui"
-        minSdk = 23
-        targetSdk = 35
+        minSdk = 19
+        targetSdk = 29
         versionCode = 1
-        versionName = "1.0"
+        versionName = "3.2"
 
-        externalNativeBuild {
-            cmake {
-                cppFlags += listOf("-std=c++17", "-frtti", "-fexceptions")
-                // Keep Sdk self-contained when the host app loads only libSdk.so.
-                arguments += listOf("-DANDROID_STL=c++_static")
-            }
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
         }
     }
 
     ndkVersion = "27.0.12077973"
 
     externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.22.1"
+        ndkBuild {
+            path = file("src/main/cpp/Android.mk")
         }
     }
 

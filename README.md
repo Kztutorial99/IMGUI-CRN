@@ -1,75 +1,67 @@
-# Modern ImGui Android SDK
+# ImGui Universal Android
 
-Base Android NativeActivity untuk Dear ImGui + OpenGL ES 3 dengan desain modern
-dan tiga menu gameplay:
+Project ini sekarang memakai source ZIP `ImGui Universal` sebagai basis native
+dan memasukkan menu project kita ke dalam `app/src/main/cpp/ProjectMenu.h`.
+
+## Menu project
+
+Menu yang aktif adalah:
 
 - **Aim** — aim settings, sensitivity, scope, recoil feedback, dan crosshair
 - **Player** — status player lokal, teammate marker, dan player debug
-- **Visuals** — hit marker, enemy fire/footstep hint, screen effect, dan outline preview
+- **Visuals** — hit marker, fire/footstep hint, screen effect, dan outline preview
+
+State menu sengaja dipisahkan dari adapter runtime. Jadi offset, method IL2CPP,
+atau callback fitur game target dapat ditambahkan kemudian tanpa mengubah
+renderer dan layout menu.
 
 ## Output library
 
-Nama target CMake adalah `Sdk`, sehingga Android menghasilkan:
+`Android.mk` menghasilkan:
 
 ```text
 libSdk.so
 ```
 
-Library dimuat oleh `android.app.NativeActivity` melalui metadata
-`android.app.lib_name`.
-
-Library juga memiliki `JNI_OnLoad`, sehingga host Java dapat memuatnya dengan:
-
-```java
-System.loadLibrary("Sdk");
-```
-
-Pemanggilan tersebut hanya memuat library. Untuk menampilkan ImGui di game
-milik host, panggil `Sdk_InitializeOnCurrentContext`,
-`Sdk_RenderOnCurrentContext`, dan `Sdk_ShutdownOnCurrentContext` dari render
-thread host saat context OpenGL ES 3 milik host sedang current. Dalam mode
-plugin, `Sdk` tidak membuat EGL context kedua dan tidak memanggil
-`eglSwapBuffers`; host tetap memiliki lifecycle render.
-
-Jika host menerima `AInputEvent`, teruskan event tersebut ke
-`Sdk_HandleInputEvent` dari thread UI/input yang sesuai. API ini hanya
-memasukkan event ke backend ImGui yang sudah aktif; ia tidak membaca offset
-atau menulis memory game.
+NativeActivity memuat library tersebut melalui metadata
+`android.app.lib_name`. JNI loader tidak lagi meneruskan ke `librealmain.so`;
+`JNI_OnLoad` langsung mengembalikan `JNI_VERSION_1_6`.
 
 ## Build
 
-Buka folder ini di Android Studio dengan Android SDK, NDK `27.0.12077973`,
-dan CMake `3.22.1` terpasang, lakukan Gradle Sync, lalu jalankan task
-`app > Tasks > build > assembleDebug`. Jika Gradle tersedia di PATH, perintah
-yang setara adalah:
+Buka project ini dengan Android Studio menggunakan:
+
+- Android SDK platform 35
+- NDK `27.0.12077973`
+- Android Gradle Plugin `8.7.3`
+
+Jalankan:
 
 ```bash
 gradle :app:assembleDebug
 ```
 
-APK debug akan berada di `app/build/outputs/apk/debug/`.
+ABI yang dibuild:
 
-## Build dengan GitHub Actions
+- `armeabi-v7a`
+- `arm64-v8a`
 
-Workflow `.github/workflows/build-so.yml` berjalan saat push ke branch `main`
-atau bisa dijalankan manual dari tab **Actions**. Workflow tersebut:
+APK debug berada di `app/build/outputs/apk/debug/`.
 
-1. Menyiapkan Java 17, Android SDK, NDK `27.0.12077973`, dan CMake `3.22.1`.
-2. Mengambil Dear ImGui `v1.92.9b` saat konfigurasi CMake.
-3. Menjalankan `assembleRelease`.
-4. Mengunggah artifact `modern-imgui-android-debug` yang berisi APK dan
-   `libSdk.so` untuk setiap ABI yang dibuild.
+## Catatan runtime
 
-Artifact `.so` tersedia di folder `artifacts/libSdk/<ABI>/libSdk.so`.
-
-## Base upstream
-
-Project mengambil sumber resmi Dear ImGui dari:
+Source ZIP masih memakai hook Dobby untuk `eglSwapBuffers` dan backend ImGui
+Android/OpenGL ES 3 versi ZIP. Path library system sudah dibuat ABI-aware.
+Log yang diperlukan untuk menyatakan overlay aktif adalah:
 
 ```text
-https://github.com/ocornut/imgui
+library loaded
+eglSwapBuffers hook installed
+hook called
+surface dimensions valid
+ImGui initialized
+first frame rendered
 ```
 
-Versi dipin ke `v1.92.9b` di `app/src/main/cpp/CMakeLists.txt`, memakai
-`examples/example_android_opengl3` sebagai pola NativeActivity/OpenGL ES 3.
-Untuk upgrade, ubah `IMGUI_VERSION` ke tag resmi yang ingin digunakan.
+Offset dan fitur game-specific dari source ZIP belum dianggap valid untuk target
+baru. Adapter runtime harus menggunakan dump, ABI, dan versi game target sendiri.

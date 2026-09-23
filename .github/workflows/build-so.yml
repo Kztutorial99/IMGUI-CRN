@@ -41,7 +41,6 @@ jobs:
           sdkmanager --sdk_root="${ANDROID_HOME}" --install \
             "platform-tools" "platforms;android-35" \
             "build-tools;35.0.0" \
-            "cmake;3.22.1" \
             "ndk;27.0.12077973"
           yes | sdkmanager --sdk_root="${ANDROID_HOME}" --licenses >/dev/null || true
 
