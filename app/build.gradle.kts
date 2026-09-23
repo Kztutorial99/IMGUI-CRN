@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.modernimgui"
-        minSdk = 19
+        minSdk = 21
         targetSdk = 29
         versionCode = 1
         versionName = "3.2"
